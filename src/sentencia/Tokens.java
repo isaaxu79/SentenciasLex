@@ -17,5 +17,7 @@ public enum Tokens {
     Menor,
     Identificador,
     Numero,
-    Signos
+    Signos,
+    Comparadores,
+    ERROR
 }

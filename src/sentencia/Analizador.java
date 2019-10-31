@@ -5,6 +5,12 @@
  */
 package sentencia;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Reader;
 import java.util.ArrayList;
 
 /**
@@ -21,6 +27,7 @@ public class Analizador {
     private boolean correctgb=true;
     private boolean correctg=true;
     private boolean digit=true;
+    private final char c = (char)34;
     
     ArrayList<Palabra> sentenciaValidada;
     
@@ -37,7 +44,7 @@ public class Analizador {
     public ArrayList<Palabra> validateSentence(){
         separed();
         validacion();
-        //imprimir();
+        imprimir();
         return sentenciaValidada;
     }
     
@@ -151,7 +158,71 @@ public class Analizador {
     }
     
     public void validacion(){
-        
+        sentenciaPartes.forEach((aux) -> {
+            if(aux.equals(",")){
+                sentenciaValidada.add(new Palabra(aux, 0, 0, "orange")); 
+            }else if(aux.equals("'")){
+                sentenciaValidada.add(new Palabra(aux, 0, 0, "orange"));
+            }else if(aux.charAt(0) == c){
+                sentenciaValidada.add(new Palabra(aux, 0, 0, "orange"));
+            }else{
+                if(aux.contains("%") || aux.contains("#")|| aux.contains("&") || aux.contains("$") 
+                        || aux.contains("/") || aux.contains("(") || aux.contains(")") || aux.contains("?") 
+                        || aux.contains("¿") || aux.contains("¡") || aux.contains("*") || aux.contains("{") 
+                        || aux.contains("}")){
+                    sentenciaValidada.add(new Palabra(aux, 0, 0, "red"));
+                }else{
+                    File archivo = new File("archivo.txt");
+                    PrintWriter escribir;
+                    try {
+                        escribir = new PrintWriter(archivo);
+                        escribir.print(aux);
+                        escribir.close();
+                    } catch (Exception e) {
+                        System.err.println("Paso Algoo wee");
+                    }
+                    try {
+                        Reader lector = new BufferedReader(new FileReader("archivo.txt"));
+                        Lexer lexer = new Lexer(lector);
+                        String resultado = "";
+                        Tokens tokens;
+                        while (true) {
+                            try {
+                                tokens = lexer.yylex();
+                                if (tokens == null) {
+                                return;
+                                }
+                                switch (tokens) {
+                                    case Identificador:
+                                        sentenciaValidada.add(new Palabra(aux, 0, 0, "white")); 
+                                        break;
+                                    case Numero:
+                                        sentenciaValidada.add(new Palabra(aux, 0, 0, "blue")); 
+                                        break;
+                                    case Reservadas:
+                                        sentenciaValidada.add(new Palabra(aux, 0, 0, "green")); 
+                                        break;
+                                    case Signos:
+                                        sentenciaValidada.add(new Palabra(aux, 0, 0, "orange")); 
+                                        //resultado += lexer.lexeme + ": Es un " + tokens + "\n";
+                                        break;
+                                    case Comparadores:
+                                        sentenciaValidada.add(new Palabra(aux, 0, 0, "vio")); 
+                                        //resultado += lexer.lexeme + ": Es un " + tokens + "\n";
+                                        break;
+                                    default:
+                                        sentenciaValidada.add(new Palabra(aux, 0, 0, "white")); 
+                                        //resultado += "Token: " + tokens + "\n";
+                                        break;
+                                }
+                            } catch (IOException e) {
+                                sentenciaValidada.add(new Palabra(aux, 0, 0, "red"));
+                            }
+                        }
+                    } catch (Exception e) {}
+                }
+            }   
+        });
     }
     
     

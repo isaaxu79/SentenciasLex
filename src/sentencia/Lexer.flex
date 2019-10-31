@@ -6,6 +6,8 @@ import static sentencia.Tokens.*;
 L=[a-zA-Z_]+
 D=[0-9]+
 espacio=[ ,\t,\r,\n]+
+signos=[.,:,;]
+comparadores=[<,>,=,!]
 %{
     public String lexeme;
 %}
@@ -21,9 +23,8 @@ or |
 where {lexeme=yytext(); return Reservadas;}
 {espacio} {/*Ignore*/}
 "//".* {/*Ignore*/}
-"=" {return Igual;}
-"!" {return Diferente;}
-">" {return Mayor;}
-"<" {return Menor;}
+{signos} {lexeme=yytext(); return Signos;}
+{comparadores} {lexeme=yytext(); return Comparadores;}
 {L}({L}|{D})* {lexeme=yytext(); return Identificador;}
 ("(-"{D}+")")|{D}+ {lexeme=yytext(); return Numero;}
+ % {return ERROR;}

@@ -45,7 +45,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void descomponer(ActionEvent event) {
         code.getChildren().clear();
-        lexico = new Analizador(area.getText());
+        lexico = new Analizador(area.getText().toLowerCase());
         ArrayList<Palabra> sentencia = lexico.validateSentence();
         code.getChildren().addAll();
         for(Palabra aux : sentencia) {
@@ -57,8 +57,12 @@ public class FXMLDocumentController implements Initializable {
                 text.setFill(Color.RED);
             } else if(aux.color.equals("white")){
                 text.setFill(Color.WHITESMOKE);
-            } else if(aux.color.equals("vio")){
+            } else if(aux.color.equals("orange")){
                 text.setFill(Color.ORANGE);
+            }else if(aux.color.equals("vio")){
+                text.setFill(Color.DARKORCHID);
+            }else if(aux.color.equals("blue")){
+                text.setFill(Color.AQUA);
             }
             text.setFont(Font.font("consolas", 18)); 
             code.getChildren().add(text);
