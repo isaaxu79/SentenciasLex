@@ -30,6 +30,7 @@ public class Analizador {
     private final char c = (char)34;
     
     ArrayList<Palabra> sentenciaValidada;
+    ArrayList<String> regreso;
     
     public Analizador(String sentencia){
         this.sentencia = sentencia;
@@ -43,8 +44,8 @@ public class Analizador {
     
     public ArrayList<Palabra> validateSentence(){
         separed();
-        validacion();
         imprimir();
+        validacion();
         return sentenciaValidada;
     }
     
@@ -150,6 +151,10 @@ public class Analizador {
         
     }
     
+    public ArrayList<String> getArrayListMe(){
+        return sentenciaPartes;
+    }
+    
     private void imprimir() {
         System.out.println("Esto hay en la cadena");
         sentenciaPartes.forEach((aux) -> {
@@ -225,148 +230,9 @@ public class Analizador {
         });
     }
     
-    
-    
-    
-    
-    
-    
-    
-    /*
-    *Aqui esta la version 1 no ocupar
-    */
-    public boolean palabraReservada(String datos){
-        String dat = datos.toLowerCase();
-        return dat.equals("delete") | dat.equals("from") | dat.equals("or") | dat.equals("and") | dat.equals("where") | dat.equals("using") | dat.equals("order") | dat.equals("by") | dat.equals("limit");
-    }
-
-    private void valida() {
-        sentenciaPartes.forEach((aux) -> {
-            boolean reservada = palabraReservada(aux);
-            if(reservada){
-                sentenciaValidada.add(new Palabra(aux, 0, 0, "green"));
-            }else if(comparaciones(aux)){
-                sentenciaValidada.add(new Palabra (aux,0,0,"vio"));
-            }else{
-                auxiliar = null;
-                auxiliar = aux.split("");
-                validaFragmento(aux);
-            }
-        });
-    }
-    
-    void validaNumero(){
-        /// numero
-        // fecha
-        // hora
-        if(index<auxiliar.length){
-            String val = whatIs(auxiliar[index]);
-            if(val.equals("digito")){
-                index++;
-                validaNumero();
-            }else if(val.equals("punto")){
-                index++;
-                onlyNum();
-            }
-        }
-    }
-    
-    void onlyNum(){
-        if(index<auxiliar.length){
-            String val = whatIs(auxiliar[index]);
-            if(val.equals("digito")){
-                index++;
-                onlyNum();
-            }else{
-                index++;
-                digit=false;
-            }
-        }
-    }
-    
-    void validaFragmento(String fin){
-        
-        String val = whatIs(auxiliar[index]);
-        if(val.equals("digito")){
-            index++;
-            validaNumero();
-            if(digit){
-                sentenciaValidada.add(new Palabra(fin,0,0,"white"));
-                digit=true;
-                index=0;
-            }else{
-                sentenciaValidada.add(new Palabra(fin,0,0,"red"));
-                digit=true;
-                index=0;
-            }
-        }else if(val.equals("letra")){
-            index++;
-            validaIdP();
-            if(correctg && correctgb){
-                sentenciaValidada.add(new Palabra(fin,0,0,"white"));
-                correctg=true;
-                correctgb=true;
-                index=0;
-            }else{
-                sentenciaValidada.add(new Palabra(fin,0,0,"red"));
-                correctg=true;
-                correctgb=true;
-                index=0;
-            }
-        }
-    }
-    
-    void validaIdP(){
-        if(index<auxiliar.length){
-            String val = whatIs(auxiliar[index]);
-            if(val.equals("letra") || val.equals("digito")){
-                index++;
-                validaIdP();
-            }else if(val.equals("punto")|| val.equals("gb") || val.equals("g")){
-                index++;
-                validaIdP();
-            }else{
-                correctg=false;
-            }
-        }
-    }
-    
     public boolean comparaciones(String datos){
         return datos.equals("<=") | datos.equals("=") | datos.equals("<>") | datos.equals("<") | datos.equals(">") | datos.equals(">=");
     } 
-    
-    private void onlyLetra() {
-        if(index<auxiliar.length){
-            String val = whatIs(auxiliar[index]);
-            System.out.println("aqui we---"+auxiliar[index]);
-            if(val.equals("letra") || val.equals("digito")){
-                System.out.println("entre");
-                index++;
-                soloLetraAndNum();
-            }else{
-                correctg=false;
-                correctgb=false;
-            }
-        }else{
-            correctg=false;
-            correctgb=false;
-        }
-    }
-    
-    private void soloLetraAndNum(){
-        if(index<auxiliar.length){
-            String val = whatIs(auxiliar[index]);
-            System.out.println("aqui we---"+auxiliar[index]);
-            if(val.equals("letra") || val.equals("digito")){
-                System.out.println("entre");
-                index++;
-                validaIdP();
-            }else{
-                correctg=false;
-                correctgb=false;
-            }
-        }
-    }
     
     private String whatIs(String valor){
         String tipo;

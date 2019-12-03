@@ -28,7 +28,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML private Label label;
     @FXML private TextArea area;
     @FXML private TextFlow code;
-    
+    @FXML private Label estado;
     Analizador lexico; 
     
     @FXML
@@ -45,28 +45,54 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void descomponer(ActionEvent event) {
         code.getChildren().clear();
+        boolean pass= true;
         lexico = new Analizador(area.getText().toLowerCase());
-        ArrayList<Palabra> sentencia = lexico.validateSentence();
-        code.getChildren().addAll();
-        for(Palabra aux : sentencia) {
-            System.out.println("---"+aux.partePalabra);
-            Text text = new Text(aux.partePalabra+" ");
-            if(aux.color.equals("green")){
-                text.setFill(Color.GREENYELLOW);
-            } else if(aux.color.equals("red")){
-                text.setFill(Color.RED);
-            } else if(aux.color.equals("white")){
-                text.setFill(Color.WHITESMOKE);
-            } else if(aux.color.equals("orange")){
-                text.setFill(Color.ORANGE);
-            }else if(aux.color.equals("vio")){
-                text.setFill(Color.DARKORCHID);
-            }else if(aux.color.equals("blue")){
-                text.setFill(Color.AQUA);
+        ArrayList<Palabra> sentencia = null;
+        try {
+            sentencia = lexico.validateSentence();
+            code.getChildren().addAll();
+            for(Palabra aux : sentencia) {
+                System.out.println("---"+aux.partePalabra);
+                Text text = new Text(aux.partePalabra+" ");
+                if(aux.color.equals("green")){
+                    text.setFill(Color.GREENYELLOW);
+                } else if(aux.color.equals("red")){
+                    text.setFill(Color.RED);
+                    pass=false;
+                } else if(aux.color.equals("white")){
+                    text.setFill(Color.WHITESMOKE);
+                } else if(aux.color.equals("orange")){
+                    text.setFill(Color.ORANGE);
+                }else if(aux.color.equals("vio")){
+                    text.setFill(Color.DARKORCHID);
+                }else if(aux.color.equals("blue")){
+                    text.setFill(Color.AQUA);
+                }
+                text.setFont(Font.font("consolas", 18)); 
+                code.getChildren().add(text);
             }
-            text.setFont(Font.font("consolas", 18)); 
-            code.getChildren().add(text);
+        } catch (Exception e) {
+            System.err.println("error");
         }
+        if(pass){
+           AutomataPila ap;
+           boolean t=true;
+            try {
+                ap = new AutomataPila(lexico.getArrayListMe());
+                t = ap.validacion();
+            } catch (Exception e) {
+                estado.setText("exception :c");
+            }
+            
+            if(t){
+                estado.setText("  Correcta");
+            }else{
+                estado.setText("   Incorrecta");
+            } 
+        }else{
+            estado.setText("   Incorrecta");
+        }
+        
     }
     
     @Override
